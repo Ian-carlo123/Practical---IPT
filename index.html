@@ -58,14 +58,8 @@
 
   .status { font-weight:bold; }
   .status.Borrowed { color:#d17f00; }
+  .status["Not Yet Returned"] { color:orange; }
   .status.Returned { color:green; }
-
-  .caption {
-    text-align:center; 
-    margin-top:10px; 
-    font-size:13px; 
-    color:#444;
-  }
 </style>
 </head>
 <body>
@@ -77,21 +71,15 @@ async function fetchBorrowedBooks() {
   try {
     const res = await fetch("http://localhost:3000/"); 
     const data = await res.json();
-    const { Borrowers, Books, Authors } = data.Library;
+    const { Students, Books, Authors } = data.Library;
     const container = document.getElementById("recordsContainer");
     container.innerHTML = "";
 
-    // Map batch_books to book_id (adjust if needed)
-    const bookIdMap = {
-      1: "B001",
-      2: "B002"
-    };
-
-    Borrowers.forEach(borrower => {
+    Students.forEach(student => {
       const record = document.createElement("div");
       record.classList.add("record");
 
-      const firstBatch = borrower.BorrowBatches[0];
+      const firstBatch = student.BorrowBatches[0];
       const firstBorrow = firstBatch.Borrows[0];
 
       record.innerHTML = `
@@ -103,13 +91,13 @@ async function fetchBorrowedBooks() {
         <div class="record-header">
           <div class="info">
             <p><strong>Transaction ID:</strong> ${firstBorrow.borrow_transactionid}</p>
-            <p><strong>Borrower ID:</strong> ${borrower.borrower_id}</p>
-            <p><strong>Borrower Name:</strong> ${borrower.borrower_lastname}, ${borrower.borrower_firstname} ${borrower.borrower_middlename}</p>
-            <p><strong>Address:</strong> ${borrower.borrower_address}</p>
+            <p><strong>Student ID:</strong> ${student.stud_id}</p>
+            <p><strong>Name:</strong> ${student.stud_lastname}, ${student.stud_firstname} ${student.stud_middlename}</p>
+            <p><strong>Address:</strong> ${student.stud_address}</p>
           </div>
           <div class="info">
-            <p><strong>Gender:</strong> ${borrower.borrower_gender}</p>
-            <p><strong>Age:</strong> ${borrower.borrower_age}</p>
+            <p><strong>Gender:</strong> ${student.stud_gender}</p>
+            <p><strong>Age:</strong> ${student.stud_age}</p>
             <p><strong>Status:</strong> <span class="status ${firstBorrow.borrow_status}">${firstBorrow.borrow_status}</span></p>
             <p><strong>Borrowed Date:</strong> ${firstBorrow.borrow_date}</p>
             <p><strong>Return Date:</strong> ${firstBorrow.borrow_duedate}</p>
@@ -117,6 +105,7 @@ async function fetchBorrowedBooks() {
         </div>
       `;
 
+      // Borrowed Books Table
       let tableHTML = `
         <h3>BORROWED BOOKS</h3>
         <table>
@@ -131,18 +120,17 @@ async function fetchBorrowedBooks() {
           <tbody>
       `;
 
-      borrower.BorrowBatches.forEach(batch => {
-        batch.Borrows.forEach(borrow => {
-          const bookId = bookIdMap[batch.batch_books]; 
-          const book = Books.find(b => b.book_id === bookId);
-          const author = Authors.find(a => a.aut_id === book.book_authors);
+      student.BorrowBatches.forEach(batch => {
+        batch.Borrows.forEach((borrow, idx) => {
+          const book = Books[idx] || {}; // fallback in case fewer books
+          const author = Authors.find(a => a.aut_id == book.book_authors);
 
           tableHTML += `
             <tr>
               <td>${batch.batch_id}</td>
-              <td>${book.book_id}</td>
-              <td>${book.book_title}</td>
-              <td>${author.aut_firstname} ${author.aut_lastname}</td>
+              <td>${book.book_id || "Unknown"}</td>
+              <td>${book.book_title || "Unknown"}</td>
+              <td>${author ? `${author.aut_firstname} ${author.aut_lastname}` : "Unknown"}</td>
             </tr>
           `;
         });
@@ -156,6 +144,8 @@ async function fetchBorrowedBooks() {
 
   } catch (err) {
     console.error("Error fetching borrowed books:", err);
+    document.getElementById("recordsContainer").innerHTML =
+      "<p style='color:red'>Failed to load data.</p>";
   }
 }
 

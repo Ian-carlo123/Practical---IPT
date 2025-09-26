@@ -1,35 +1,44 @@
 {
   "Library": {
-    "Borrowers": [
+    "Students": [
       {
-        "borrower_id": 1,
-        "borrower_firstname": "Juan",
-        "borrower_middlename": "Cruz",
-        "borrower_lastname": "Santos",
-        "borrower_address": "Quezon City",
-        "borrower_gender": "Male",
-        "borrower_age": 21,
+        "stud_id": "STUD-21378",
+        "stud_firstname": "Juan",
+        "stud_middlename": "Cruz",
+        "stud_lastname": "Santos",
+        "stud_address": "Malaybalay City, Bukidnon",
+        "stud_gender": "Male",
+        "stud_age": 20,
         "BorrowBatches": [
           {
-            "batch_id": 101,
+            "batch_id": 10,
             "batch_books": 2,
-            "batch_borrowerid": 1,
+            "batch_studentid": 1,
             "Borrows": [
               {
-                "borrow_transactionid": 1001,
+                "borrow_transactionid": "AB31D",
                 "borrow_date": "2025-09-10",
                 "borrow_duedate": "2025-09-20",
                 "borrow_returndate": "2025-09-19",
-                "borrow_bookbatch": 101,
+                "borrow_bookbatch": 1001,
                 "borrow_fines": 0,
-                "borrow_status": "Returned"
+                "borrow_status": "Not Yet Returned"
               },
               {
-                "borrow_transactionid": 1002,
+                "borrow_transactionid": "AB31D",
                 "borrow_date": "2025-09-15",
                 "borrow_duedate": "2025-09-25",
                 "borrow_returndate": null,
-                "borrow_bookbatch": 101,
+                "borrow_bookbatch": 1002,
+                "borrow_fines": 0,
+                "borrow_status": "Borrowed"
+              },
+              {
+                "borrow_transactionid": "AB31D",
+                "borrow_date": "2025-09-15",
+                "borrow_duedate": "2025-09-25",
+                "borrow_returndate": null,
+                "borrow_bookbatch": 1003,
                 "borrow_fines": 0,
                 "borrow_status": "Borrowed"
               }
