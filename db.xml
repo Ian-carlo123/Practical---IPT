@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Library>
+    <Students>
+        <Student>
+            <stud_id>1</stud_id>
+            <stud_firstname>Juan</stud_firstname>
+            <stud_middlename>Cruz</stud_middlename>
+            <stud_lastname>Santos</stud_lastname>
+            <stud_address>Quezon City</stud_address>
+            <stud_gender>Male</stud_gender>
+            <stud_age>21</stud_age>
+
+            <BorrowBatches>
+                <BorrowBatch>
+                    <batch_id>101</batch_id>
+                    <batch_books>2</batch_books>
+                    <batch_studentid>1</batch_studentid>
+
+                    <Borrows>
+                        <Borrow>
+                            <borrow_transactionid>1001</borrow_transactionid>
+                            <borrow_date>2025-09-10</borrow_date>
+                            <borrow_duedate>2025-09-20</borrow_duedate>
+                            <borrow_returndate>2025-09-19</borrow_returndate>
+                            <borrow_bookbatch>101</borrow_bookbatch>
+                            <borrow_fines>0</borrow_fines>
+                            <borrow_status>Returned</borrow_status>
+                        </Borrow>
+
+                        <Borrow>
+                            <borrow_transactionid>1002</borrow_transactionid>
+                            <borrow_date>2025-09-15</borrow_date>
+                            <borrow_duedate>2025-09-25</borrow_duedate>
+                            <borrow_returndate></borrow_returndate>
+                            <borrow_bookbatch>101</borrow_bookbatch>
+                            <borrow_fines>0</borrow_fines>
+                            <borrow_status>Borrowed</borrow_status>
+                        </Borrow>
+                    </Borrows>
+                </BorrowBatch>
+            </BorrowBatches>
+        </Student>
+    </Students>
+
+    <Books>
+        <Book>
+            <book_id>B001</book_id>
+            <book_title>Database Systems</book_title>
+            <book_authors>1</book_authors>
+            <book_pubdate>2022-01-10</book_pubdate>
+        </Book>
+
+        <Book>
+            <book_id>B002</book_id>
+            <book_title>XML Fundamentals</book_title>
+            <book_authors>2</book_authors>
+            <book_pubdate>2023-03-15</book_pubdate>
+        </Book>
+    </Books>
+
+    <Authors>
+        <Author>
+            <aut_id>1</aut_id>
+            <aut_firstname>Maria</aut_firstname>
+            <aut_lastname>Lopez</aut_lastname>
+        </Author>
+
+        <Author>
+            <aut_id>2</aut_id>
+            <aut_firstname>Carlos</aut_firstname>
+            <aut_lastname>Dela Cruz</aut_lastname>
+        </Author>
+    </Authors>
+</Library>

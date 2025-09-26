@@ -1,0 +1,46 @@
+Library:
+  Students:
+    - stud_id: 1
+      stud_firstname: Juan
+      stud_middlename: Cruz
+      stud_lastname: Santos
+      stud_address: Quezon City
+      stud_gender: Male
+      stud_age: 21
+      BorrowBatches:
+        - batch_id: 101
+          batch_books: 2
+          batch_studentid: 1
+          Borrows:
+            - borrow_transactionid: 1001
+              borrow_date: "2025-09-10"
+              borrow_duedate: "2025-09-20"
+              borrow_returndate: "2025-09-19"
+              borrow_bookbatch: 101
+              borrow_fines: 0
+              borrow_status: Returned
+            - borrow_transactionid: 1002
+              borrow_date: "2025-09-15"
+              borrow_duedate: "2025-09-25"
+              borrow_returndate: null
+              borrow_bookbatch: 101
+              borrow_fines: 0
+              borrow_status: Borrowed
+
+  Books:
+    - book_id: B001
+      book_title: Database Systems
+      book_authors: 1
+      book_pubdate: "2022-01-10"
+    - book_id: B002
+      book_title: XML Fundamentals
+      book_authors: 2
+      book_pubdate: "2023-03-15"
+
+  Authors:
+    - aut_id: 1
+      aut_firstname: Maria
+      aut_lastname: Lopez
+    - aut_id: 2
+      aut_firstname: Carlos
+      aut_lastname: Dela Cruz

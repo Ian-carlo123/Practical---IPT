@@ -1,0 +1,1 @@
+Henlo, This is Jemaica Silvano but you can just call me Maica, Jem, or anything that you're comfortable with. All my contributions in this team are in here, please take time to understand them nyahaha
