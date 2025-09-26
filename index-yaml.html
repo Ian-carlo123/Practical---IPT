@@ -26,7 +26,7 @@
   th { background:#f8f8f8; }
 
   .status { font-weight:bold; }
-  .status.Borrowed { color:#d17f00; }
+  .status.NotYetReturned { color:#d17f00; }
   .status.Returned { color:green; }
 </style>
 </head>
@@ -34,19 +34,19 @@
 <h1>Borrowed Books (YAML)</h1>
 <div id="recordsContainer"></div>
 
-<!-- Load js-yaml -->
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 <script>
 async function fetchBorrowedBooksYAML() {
   try {
     const res = await fetch("http://localhost:3002/"); 
     if (!res.ok) throw new Error("Network response was not ok");
-    const yamlText = await res.text();
-    const data = jsyaml.load(yamlText); 
 
-    const borrowers = data.Library.Borrowers;
-    const books = data.Library.Books;
-    const authors = data.Library.Authors;
+    const yamlText = await res.text();
+    const data = jsyaml.load(yamlText);
+
+    const borrowers = data.Borrowers;
+    const books = data.Books;
+    const authors = data.Authors;
 
     const container = document.getElementById("recordsContainer");
     container.innerHTML = "";
@@ -55,13 +55,9 @@ async function fetchBorrowedBooksYAML() {
       const record = document.createElement("div");
       record.classList.add("record");
 
-      const firstBatch = borrower.BorrowBatches[0];
-      const firstBorrow = firstBatch.Borrows[0];
-
-      const transactionId = firstBorrow.borrow_transactionid;
-      const borrowDate = firstBorrow.borrow_date;
-      const dueDate = firstBorrow.borrow_duedate;
-      const status = firstBorrow.borrow_status;
+      // First borrow for header info
+      const firstBorrow = borrower.BorrowBatches[0].Borrows[0];
+      const status = firstBorrow.borrow_status.replace(/\s/g,'');
 
       record.innerHTML = `
         <div class="record-actions">
@@ -70,27 +66,26 @@ async function fetchBorrowedBooksYAML() {
         </div>
         <div class="record-header">
           <div class="info">
-            <p><strong>Transaction ID:</strong> ${transactionId}</p>
             <p><strong>Borrower ID:</strong> ${borrower.borrower_id}</p>
-            <p><strong>Borrower Name:</strong> ${borrower.borrower_lastname}, ${borrower.borrower_firstname} ${borrower.borrower_middlename}</p>
+            <p><strong>Name:</strong> ${borrower.borrower_lastname}, ${borrower.borrower_firstname} ${borrower.borrower_middlename}</p>
             <p><strong>Address:</strong> ${borrower.borrower_address}</p>
           </div>
           <div class="info">
             <p><strong>Gender:</strong> ${borrower.borrower_gender}</p>
             <p><strong>Age:</strong> ${borrower.borrower_age}</p>
-            <p><strong>Status:</strong> <span class="status ${status}">${status}</span></p>
-            <p><strong>Borrowed Date:</strong> ${borrowDate}</p>
-            <p><strong>Return Date:</strong> ${dueDate}</p>
+            <p><strong>Status:</strong> <span class="status ${status}">${firstBorrow.borrow_status}</span></p>
+            <p><strong>Borrowed Date:</strong> ${firstBorrow.borrow_date}</p>
+            <p><strong>Return Date:</strong> ${firstBorrow.borrow_duedate}</p>
           </div>
         </div>
       `;
 
+      // Build table of all borrowed books
       let tableHTML = `
         <h3>BORROWED BOOKS</h3>
         <table>
           <thead>
             <tr>
-              <th>Batch ID</th>
               <th>Book ID</th>
               <th>Book Title</th>
               <th>Book Author</th>
@@ -100,16 +95,16 @@ async function fetchBorrowedBooksYAML() {
       `;
 
       borrower.BorrowBatches.forEach(batch => {
-        batch.Borrows.forEach((borrow, idx) => {
-          const book = books[idx]; 
+        batch.Borrows.forEach((borrow, index) => {
+          // Map borrowed book to actual book in Books array
+          const book = books[index]; // Assuming order in YAML
+          if (!book) return;
           const author = authors.find(a => a.aut_id == book.book_authors);
-
           tableHTML += `
             <tr>
-              <td>${batch.batch_id}</td>
               <td>${book.book_id}</td>
               <td>${book.book_title}</td>
-              <td>${author ? `${author.aut_firstname} ${author.aut_lastname}` : "Unknown"}</td>
+              <td>${author ? author.aut_firstname + " " + author.aut_lastname : "Unknown"}</td>
             </tr>
           `;
         });
@@ -123,8 +118,7 @@ async function fetchBorrowedBooksYAML() {
 
   } catch (err) {
     console.error("❌ Error fetching/parsing YAML:", err);
-    document.getElementById("recordsContainer").innerHTML =
-      "<p style='color:red'>Failed to load YAML data.</p>";
+    container.innerHTML = "<p style='color:red'>Failed to load YAML data.</p>";
   }
 }
 

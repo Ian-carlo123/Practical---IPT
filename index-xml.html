@@ -26,7 +26,7 @@
   th { background:#f8f8f8; }
 
   .status { font-weight:bold; }
-  .status.Borrowed { color:#d17f00; }
+  .status["Not Yet Returned"] { color:#d17f00; }
   .status.Returned { color:green; }
 </style>
 </head>
@@ -37,36 +37,42 @@
 <script>
 async function fetchBorrowedBooksXML() {
   try {
-    const res = await fetch("http://localhost:3001/api/xml");
+    const res = await fetch("http://localhost:3001");
     const xmlText = await res.text();
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, "application/xml");
 
-    const borrowers = xmlDoc.getElementsByTagName("Borrower");
-    const books = Array.from(xmlDoc.getElementsByTagName("Book"));
-    const authors = Array.from(xmlDoc.getElementsByTagName("Author"));
-
+    const borrows = xmlDoc.getElementsByTagName("Borrow");
     const container = document.getElementById("recordsContainer");
     container.innerHTML = "";
 
-    Array.from(borrowers).forEach(borrower => {
+    Array.from(borrows).forEach(borrow => {
+      const transactionId = borrow.getElementsByTagName("borrow_transactionid")[0].textContent;
+      const borrowDate = borrow.getElementsByTagName("borrow_date")[0].textContent;
+      const dueDate = borrow.getElementsByTagName("borrow_duedate")[0].textContent;
+      const status = borrow.getElementsByTagName("borrow_status")[0].textContent;
+
+      // Student Info
+      const student = borrow.getElementsByTagName("Student")[0];
+      const studId = student.getElementsByTagName("stud_id")[0].textContent;
+      const fname = student.getElementsByTagName("stud_firstname")[0].textContent;
+      const mname = student.getElementsByTagName("stud_middlename")[0].textContent;
+      const lname = student.getElementsByTagName("stud_lastname")[0].textContent;
+      const address = student.getElementsByTagName("stud_address")[0].textContent;
+      const gender = student.getElementsByTagName("stud_gender")[0].textContent;
+      const age = student.getElementsByTagName("stud_age")[0].textContent;
+
+      // Book Info
+      const book = borrow.getElementsByTagName("Book")[0];
+      const bookId = book.getElementsByTagName("book_id")[0].textContent;
+      const bookTitle = book.getElementsByTagName("book_title")[0].textContent;
+      const author = book.getElementsByTagName("Author")[0];
+      const authorName = `${author.getElementsByTagName("aut_firstname")[0].textContent} ${author.getElementsByTagName("aut_lastname")[0].textContent}`;
+
+      // Create record
       const record = document.createElement("div");
       record.classList.add("record");
-
-      const id = borrower.getElementsByTagName("borrower_id")[0].textContent;
-      const fname = borrower.getElementsByTagName("borrower_firstname")[0].textContent;
-      const mname = borrower.getElementsByTagName("borrower_middlename")[0].textContent;
-      const lname = borrower.getElementsByTagName("borrower_lastname")[0].textContent;
-      const address = borrower.getElementsByTagName("borrower_address")[0].textContent;
-      const gender = borrower.getElementsByTagName("borrower_gender")[0].textContent;
-      const age = borrower.getElementsByTagName("borrower_age")[0].textContent;
-
-      const firstBorrow = borrower.getElementsByTagName("Borrow")[0];
-      const transactionId = firstBorrow.getElementsByTagName("borrow_transactionid")[0].textContent;
-      const borrowDate = firstBorrow.getElementsByTagName("borrow_date")[0].textContent;
-      const dueDate = firstBorrow.getElementsByTagName("borrow_duedate")[0].textContent;
-      const status = firstBorrow.getElementsByTagName("borrow_status")[0].textContent;
 
       record.innerHTML = `
         <div class="record-actions">
@@ -76,63 +82,37 @@ async function fetchBorrowedBooksXML() {
         <div class="record-header">
           <div class="info">
             <p><strong>Transaction ID:</strong> ${transactionId}</p>
-            <p><strong>Borrower ID:</strong> ${id}</p>
+            <p><strong>Borrower ID:</strong> ${studId}</p>
             <p><strong>Borrower Name:</strong> ${lname}, ${fname} ${mname}</p>
             <p><strong>Address:</strong> ${address}</p>
           </div>
           <div class="info">
             <p><strong>Gender:</strong> ${gender}</p>
             <p><strong>Age:</strong> ${age}</p>
-            <p><strong>Status:</strong> <span class="status ${status}">${status}</span></p>
+            <p><strong>Status:</strong> <span class="status">${status}</span></p>
             <p><strong>Borrowed Date:</strong> ${borrowDate}</p>
             <p><strong>Return Date:</strong> ${dueDate}</p>
           </div>
         </div>
-      `;
-
-      let tableHTML = `
         <h3>BORROWED BOOKS</h3>
         <table>
           <thead>
             <tr>
-              <th>Batch ID</th>
               <th>Book ID</th>
               <th>Book Title</th>
               <th>Book Author</th>
             </tr>
           </thead>
           <tbody>
-      `;
-
-      const batches = borrower.getElementsByTagName("BorrowBatch");
-      Array.from(batches).forEach(batch => {
-        const batchId = batch.getElementsByTagName("batch_id")[0].textContent;
-        const bookCount = parseInt(batch.getElementsByTagName("batch_books")[0].textContent);
-
-        for (let i = 1; i <= bookCount; i++) {
-          const book = books[i - 1];
-          const bookId = book.getElementsByTagName("book_id")[0].textContent;
-          const bookTitle = book.getElementsByTagName("book_title")[0].textContent;
-          const authorId = book.getElementsByTagName("book_authors")[0].textContent;
-
-          const author = authors.find(a => a.getElementsByTagName("aut_id")[0].textContent === authorId);
-          const authorName = author 
-            ? `${author.getElementsByTagName("aut_firstname")[0].textContent} ${author.getElementsByTagName("aut_lastname")[0].textContent}`
-            : "Unknown";
-
-          tableHTML += `
             <tr>
-              <td>${batchId}</td>
               <td>${bookId}</td>
               <td>${bookTitle}</td>
               <td>${authorName}</td>
             </tr>
-          `;
-        }
-      });
+          </tbody>
+        </table>
+      `;
 
-      tableHTML += `</tbody></table>`;
-      record.innerHTML += tableHTML;
       container.appendChild(record);
     });
 

@@ -3,119 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Borrowed Books</title>
+<title>Borrowed Books (JSON)</title>
 <style>
-  body { 
-    font-family: "Book Antiqua", Palatino, serif; 
-    background:#f0f2f5; 
-    margin:20px; 
-  }
-  h1 { text-align:center; margin-bottom:30px; font-size:22px; }
+body { font-family: "Book Antiqua", Palatino, serif; background:#f0f2f5; margin:20px; }
+h1 { text-align:center; margin-bottom:30px; font-size:22px; }
 
-  .record { 
-    background:#fce4ec;
-    border-radius:8px; 
-    box-shadow:0 2px 6px rgba(0,0,0,0.2); 
-    padding:20px; 
-    margin-bottom:40px; 
-    max-width:900px; 
-    margin-left:auto; 
-    margin-right:auto; 
-  }
+.record { background:#fce4ec; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); padding:20px; margin-bottom:40px; max-width:900px; margin-left:auto; margin-right:auto; }
+.record-actions { display:flex; justify-content:space-between; margin-bottom:15px; }
 
-  .record-actions {
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:15px;
-  }
+.btn { border:none; padding:8px 16px; border-radius:5px; font-size:0.9rem; cursor:pointer; color:#fff; }
+.btn-return { background:#7b1fa2; }
+.btn-return:hover { background:#6a1b9a; }
+.btn-remove { background:#c62828; }
+.btn-remove:hover { background:#b71c1c; }
 
-  .btn {
-    border:none;
-    padding:8px 16px;
-    border-radius:5px;
-    font-size:0.9rem;
-    cursor:pointer;
-    color:#fff;
-  }
-  .btn-return { background:#7b1fa2; }
-  .btn-return:hover { background:#6a1b9a; }
-  .btn-remove { background:#c62828; }
-  .btn-remove:hover { background:#b71c1c; }
+.record-header { display:flex; justify-content:space-between; margin-bottom:20px; font-size:16px; }
+.info { color:#333; line-height:1.6; }
 
-  .record-header {
-    display:flex; 
-    justify-content:space-between; 
-    margin-bottom:20px;
-    font-size:16px;
-  }
-  .info { color:#333; line-height:1.6; }
+h3 { font-size:18px; margin-top:10px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; font-size:15px; }
+th, td { border:1px solid #999; padding:8px 10px; text-align:left; }
+th { background:#f8f8f8; }
 
-  h3 { font-size:18px; margin-top:10px; }
-
-  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:15px; }
-  th, td { border:1px solid #999; padding:8px 10px; text-align:left; }
-  th { background:#f8f8f8; }
-
-  .status { font-weight:bold; }
-  .status["Not Yet Returned"] { color:orange; }
-  .status.Returned { color:green; }
+.status { font-weight:bold; }
+.status.NotYetReturned { color:#d17f00; }
+.status.Returned { color:green; }
 </style>
 </head>
 <body>
-<h1>Borrowed Books</h1>
+<h1>Borrowed Books (JSON)</h1>
 <div id="recordsContainer"></div>
 
 <script>
-async function fetchBorrowedBooks() {
-  try {
-    const res = await fetch("http://localhost:3000/borrows"); 
-    const borrows = await res.json();
-    const container = document.getElementById("recordsContainer");
-    container.innerHTML = "";
-
-    borrows.forEach(borrow => {
-      const record = document.createElement("div");
-      record.classList.add("record");
-
-      record.innerHTML = `
-        <div class="record-actions">
-          <button class="btn btn-return">Return</button>
-          <button class="btn btn-remove">Remove</button>
-        </div>
-
-        <div class="record-header">
-          <div class="info">
-            <p><strong>Transaction ID:</strong> ${borrow.borrow_transactionid}</p>
-            <p><strong>Book ID:</strong> ${borrow.Book.book_id}</p>
-            <p><strong>Book Title:</strong> ${borrow.Book.book_title}</p>
-            <p><strong>Author:</strong> ${borrow.Book.Author.aut_firstname} ${borrow.Book.Author.aut_lastname}</p>
-            <p><strong>Publish Date:</strong> ${borrow.Book.book_pubdate}</p>
+  async function fetchBorrowedBooksJSON() {
+    try {
+      const res = await fetch("http://localhost:3000");
+      const data = await res.json(); // top-level borrows array
+  
+      const container = document.getElementById("recordsContainer");
+      container.innerHTML = "";
+  
+      // Group borrows by student ID
+      const studentsMap = {};
+      data.forEach(borrow => {
+        const studentId = borrow.Student?.stud_id || "unknown";
+        if (!studentsMap[studentId]) {
+          studentsMap[studentId] = {
+            student: borrow.Student,
+            borrows: []
+          };
+        }
+        studentsMap[studentId].borrows.push(borrow);
+      });
+  
+      // Create one card per student
+      Object.values(studentsMap).forEach(({ student, borrows }) => {
+        const record = document.createElement("div");
+        record.classList.add("record");
+  
+        // For status, show latest borrow status or "Mixed"
+        const status = borrows.every(b => b.borrow_status === "Returned") 
+                       ? "Returned" 
+                       : "Not Yet Returned";
+  
+        record.innerHTML = `
+          <div class="record-actions">
+            <button class="btn btn-return">Return</button>
+            <button class="btn btn-remove">Remove Form</button>
           </div>
-          <div class="info">
-            <p><strong>Student ID:</strong> ${borrow.Student.stud_id}</p>
-            <p><strong>Name:</strong> ${borrow.Student.stud_lastname}, ${borrow.Student.stud_firstname} ${borrow.Student.stud_middlename}</p>
-            <p><strong>Address:</strong> ${borrow.Student.stud_address}</p>
-            <p><strong>Gender:</strong> ${borrow.Student.stud_gender}</p>
-            <p><strong>Age:</strong> ${borrow.Student.stud_age}</p>
-            <p><strong>Status:</strong> <span class="status ${borrow.Student.borrow_status}">${borrow.Student.borrow_status}</span></p>
-            <p><strong>Fines:</strong> ${borrow.Student.borrow_fines}</p>
-            <p><strong>Borrowed Date:</strong> ${borrow.borrow_date}</p>
-            <p><strong>Due Date:</strong> ${borrow.borrow_duedate}</p>
+          <div class="record-header">
+            <div class="info">
+              <p><strong>Borrower ID:</strong> ${student?.stud_id || "N/A"}</p>
+              <p><strong>Borrower Name:</strong> ${student?.stud_lastname || ""}, ${student?.stud_firstname || ""} ${student?.stud_middlename || ""}</p>
+              <p><strong>Address:</strong> ${student?.stud_address || ""}</p>
+              <p><strong>Gender:</strong> ${student?.stud_gender || ""}</p>
+              <p><strong>Age:</strong> ${student?.stud_age || ""}</p>
+              <p><strong>Status:</strong> <span class="status ${status.replace(/\s/g,'')}">${status}</span></p>
+            </div>
           </div>
-        </div>
-      `;
-
-      container.appendChild(record);
-    });
-
-  } catch (err) {
-    console.error("Error fetching borrowed books:", err);
-    document.getElementById("recordsContainer").innerHTML =
-      "<p style='color:red'>Failed to load data.</p>";
+          <h3>BORROWED BOOKS</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Book ID</th>
+                <th>Book Title</th>
+                <th>Book Author</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${borrows.map(b => {
+                const book = b.Book || {};
+                const author = book.Author || {};
+                return `
+                <tr>
+                  <td>${book.book_id || ""}</td>
+                  <td>${book.book_title || ""}</td>
+                  <td>${author.aut_firstname || ""} ${author.aut_lastname || ""}</td>
+                </tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        `;
+  
+        container.appendChild(record);
+      });
+  
+    } catch (err) {
+      console.error("❌ Error fetching JSON:", err);
+      container.innerHTML = "<p style='color:red'>Failed to load data.</p>";
+    }
   }
-}
-
-fetchBorrowedBooks();
-</script>
+  
+  fetchBorrowedBooksJSON();
+  </script>
+  
 </body>
 </html>
