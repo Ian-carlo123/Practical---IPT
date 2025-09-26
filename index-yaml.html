@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borrowed Books (YAML)</title>
+<style>
+  body { font-family: "Book Antiqua", Palatino, serif; background:#f0f2f5; margin:20px; }
+  h1 { text-align:center; margin-bottom:30px; font-size:22px; }
+
+  .record { background:#fce4ec; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); padding:20px; margin-bottom:40px; max-width:900px; margin-left:auto; margin-right:auto; }
+  .record-actions { display:flex; justify-content:space-between; margin-bottom:15px; }
+
+  .btn { border:none; padding:8px 16px; border-radius:5px; font-size:0.9rem; cursor:pointer; color:#fff; }
+  .btn-return { background:#7b1fa2; }
+  .btn-return:hover { background:#6a1b9a; }
+  .btn-remove { background:#c62828; }
+  .btn-remove:hover { background:#b71c1c; }
+
+  .record-header { display:flex; justify-content:space-between; margin-bottom:20px; font-size:16px; }
+  .info { color:#333; line-height:1.6; }
+
+  h3 { font-size:18px; margin-top:10px; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:15px; }
+  th, td { border:1px solid #999; padding:8px 10px; text-align:left; }
+  th { background:#f8f8f8; }
+
+  .status { font-weight:bold; }
+  .status.Borrowed { color:#d17f00; }
+  .status.Returned { color:green; }
+</style>
+</head>
+<body>
+<h1>Borrowed Books (YAML)</h1>
+<div id="recordsContainer"></div>
+
+<!-- Load js-yaml -->
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script>
+async function fetchBorrowedBooksYAML() {
+  try {
+    const res = await fetch("http://localhost:3002/"); // ✅ now matches server-yaml.js root
+    if (!res.ok) throw new Error("Network response was not ok");
+    const yamlText = await res.text();
+    const data = jsyaml.load(yamlText); // ✅ parse raw YAML
+
+    const students = data.Library.Students;
+    const books = data.Library.Books;
+    const authors = data.Library.Authors;
+
+    const container = document.getElementById("recordsContainer");
+    container.innerHTML = "";
+
+    students.forEach(student => {
+      const record = document.createElement("div");
+      record.classList.add("record");
+
+      // Take first borrow entry for header
+      const firstBatch = student.BorrowBatches[0];
+      const firstBorrow = firstBatch.Borrows[0];
+
+      const transactionId = firstBorrow.borrow_transactionid;
+      const borrowDate = firstBorrow.borrow_date;
+      const dueDate = firstBorrow.borrow_duedate;
+      const status = firstBorrow.borrow_status;
+
+      record.innerHTML = `
+        <div class="record-actions">
+          <button class="btn btn-return">Return</button>
+          <button class="btn btn-remove">Remove Form</button>
+        </div>
+        <div class="record-header">
+          <div class="info">
+            <p><strong>Transaction ID:</strong> ${transactionId}</p>
+            <p><strong>Borrower ID:</strong> ${student.stud_id}</p>
+            <p><strong>Borrower Name:</strong> ${student.stud_lastname}, ${student.stud_firstname} ${student.stud_middlename}</p>
+            <p><strong>Address:</strong> ${student.stud_address}</p>
+          </div>
+          <div class="info">
+            <p><strong>Gender:</strong> ${student.stud_gender}</p>
+            <p><strong>Age:</strong> ${student.stud_age}</p>
+            <p><strong>Status:</strong> <span class="status ${status}">${status}</span></p>
+            <p><strong>Borrowed Date:</strong> ${borrowDate}</p>
+            <p><strong>Return Date:</strong> ${dueDate}</p>
+          </div>
+        </div>
+      `;
+
+      // Borrowed Books Table
+      let tableHTML = `
+        <h3>BORROWED BOOKS</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Batch ID</th>
+              <th>Book ID</th>
+              <th>Book Title</th>
+              <th>Book Author</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      student.BorrowBatches.forEach(batch => {
+        batch.Borrows.forEach((borrow, idx) => {
+          // match books with borrow index (for demo)
+          const book = books[idx]; 
+          const author = authors.find(a => a.aut_id == book.book_authors);
+
+          tableHTML += `
+            <tr>
+              <td>${batch.batch_id}</td>
+              <td>${book.book_id}</td>
+              <td>${book.book_title}</td>
+              <td>${author ? `${author.aut_firstname} ${author.aut_lastname}` : "Unknown"}</td>
+            </tr>
+          `;
+        });
+      });
+
+      tableHTML += `</tbody></table>`;
+      record.innerHTML += tableHTML;
+
+      container.appendChild(record);
+    });
+
+  } catch (err) {
+    console.error("❌ Error fetching/parsing YAML:", err);
+    document.getElementById("recordsContainer").innerHTML =
+      "<p style='color:red'>Failed to load YAML data.</p>";
+  }
+}
+
+fetchBorrowedBooksYAML();
+</script>
+</body>
+</html>

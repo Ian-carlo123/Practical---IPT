@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borrowed Books</title>
+<style>
+  body { 
+    font-family: "Book Antiqua", Palatino, serif; 
+    background:#f0f2f5; 
+    margin:20px; 
+  }
+  h1 { text-align:center; margin-bottom:30px; font-size:22px; }
+
+  .record { 
+    background:#fce4ec; /* light pink background */
+    border-radius:8px; 
+    box-shadow:0 2px 6px rgba(0,0,0,0.2); 
+    padding:20px; 
+    margin-bottom:40px; 
+    max-width:900px; 
+    margin-left:auto; 
+    margin-right:auto; 
+  }
+
+  .record-actions {
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+  }
+
+  .btn {
+    border:none;
+    padding:8px 16px;
+    border-radius:5px;
+    font-size:0.9rem;
+    cursor:pointer;
+    color:#fff;
+  }
+  .btn-return { background:#7b1fa2; }
+  .btn-return:hover { background:#6a1b9a; }
+  .btn-remove { background:#c62828; }
+  .btn-remove:hover { background:#b71c1c; }
+
+  .record-header {
+    display:flex; 
+    justify-content:space-between; 
+    margin-bottom:20px;
+    font-size:16px;
+  }
+  .info { color:#333; line-height:1.6; }
+
+  h3 { font-size:18px; margin-top:10px; }
+
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:15px; }
+  th, td { border:1px solid #999; padding:8px 10px; text-align:left; }
+  th { background:#f8f8f8; }
+
+  .status { font-weight:bold; }
+  .status.Borrowed { color:#d17f00; }
+  .status.Returned { color:green; }
+
+  /* Footer note like screenshot */
+  .caption {
+    text-align:center; 
+    margin-top:10px; 
+    font-size:13px; 
+    color:#444;
+  }
+</style>
+</head>
+<body>
+<h1>Borrowed Books</h1>
+<div id="recordsContainer"></div>
+
+<script>
+async function fetchBorrowedBooks() {
+  try {
+    const res = await fetch("http://localhost:3000/"); 
+    const data = await res.json();
+    const { Students, Books, Authors } = data.Library;
+    const container = document.getElementById("recordsContainer");
+    container.innerHTML = "";
+
+    // Map batch_books to book_id
+    const bookIdMap = {
+      1: "B001",
+      2: "B002"
+    };
+
+    Students.forEach(student => {
+      const record = document.createElement("div");
+      record.classList.add("record");
+
+      // Use first borrow for header info
+      const firstBatch = student.BorrowBatches[0];
+      const firstBorrow = firstBatch.Borrows[0];
+
+      record.innerHTML = `
+        <div class="record-actions">
+          <button class="btn btn-return">Return</button>
+          <button class="btn btn-remove">Remove Form</button>
+        </div>
+
+        <div class="record-header">
+          <div class="info">
+            <p><strong>Transaction ID:</strong> ${firstBorrow.borrow_transactionid}</p>
+            <p><strong>Borrower ID:</strong> ${student.stud_id}</p>
+            <p><strong>Borrower Name:</strong> ${student.stud_lastname}, ${student.stud_firstname} ${student.stud_middlename}</p>
+            <p><strong>Address:</strong> ${student.stud_address}</p>
+          </div>
+          <div class="info">
+            <p><strong>Gender:</strong> ${student.stud_gender}</p>
+            <p><strong>Age:</strong> ${student.stud_age}</p>
+            <p><strong>Status:</strong> <span class="status ${firstBorrow.borrow_status}">${firstBorrow.borrow_status}</span></p>
+            <p><strong>Borrowed Date:</strong> ${firstBorrow.borrow_date}</p>
+            <p><strong>Return Date:</strong> ${firstBorrow.borrow_duedate}</p>
+          </div>
+        </div>
+      `;
+
+      let tableHTML = `
+        <h3>BORROWED BOOKS</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Batch ID</th>
+              <th>Book ID</th>
+              <th>Book Title</th>
+              <th>Book Author</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      student.BorrowBatches.forEach(batch => {
+        batch.Borrows.forEach(borrow => {
+          const bookId = bookIdMap[batch.batch_books]; 
+          const book = Books.find(b => b.book_id === bookId);
+          const author = Authors.find(a => a.aut_id === book.book_authors);
+
+          tableHTML += `
+            <tr>
+              <td>${batch.batch_id}</td>
+              <td>${book.book_id}</td>
+              <td>${book.book_title}</td>
+              <td>${author.aut_firstname} ${author.aut_lastname}</td>
+            </tr>
+          `;
+        });
+      });
+
+      tableHTML += `</tbody></table>`;
+      record.innerHTML += tableHTML;
+
+
+      container.appendChild(record);
+    });
+
+  } catch (err) {
+    console.error("Error fetching borrowed books:", err);
+  }
+}
+
+fetchBorrowedBooks();
+</script>
+</body>
+</html>

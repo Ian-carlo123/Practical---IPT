@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borrowed Books (XML)</title>
+<style>
+  body { font-family: "Book Antiqua", Palatino, serif; background:#f0f2f5; margin:20px; }
+  h1 { text-align:center; margin-bottom:30px; font-size:22px; }
+
+  .record { background:#fce4ec; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); padding:20px; margin-bottom:40px; max-width:900px; margin-left:auto; margin-right:auto; }
+  .record-actions { display:flex; justify-content:space-between; margin-bottom:15px; }
+
+  .btn { border:none; padding:8px 16px; border-radius:5px; font-size:0.9rem; cursor:pointer; color:#fff; }
+  .btn-return { background:#7b1fa2; }
+  .btn-return:hover { background:#6a1b9a; }
+  .btn-remove { background:#c62828; }
+  .btn-remove:hover { background:#b71c1c; }
+
+  .record-header { display:flex; justify-content:space-between; margin-bottom:20px; font-size:16px; }
+  .info { color:#333; line-height:1.6; }
+
+  h3 { font-size:18px; margin-top:10px; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:15px; }
+  th, td { border:1px solid #999; padding:8px 10px; text-align:left; }
+  th { background:#f8f8f8; }
+
+  .status { font-weight:bold; }
+  .status.Borrowed { color:#d17f00; }
+  .status.Returned { color:green; }
+</style>
+</head>
+<body>
+<h1>Borrowed Books (XML)</h1>
+<div id="recordsContainer"></div>
+
+<script>
+async function fetchBorrowedBooksXML() {
+  try {
+    const res = await fetch("http://localhost:3001/api/xml");
+    const xmlText = await res.text();
+
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+
+    const students = xmlDoc.getElementsByTagName("Student");
+    const books = Array.from(xmlDoc.getElementsByTagName("Book"));
+    const authors = Array.from(xmlDoc.getElementsByTagName("Author"));
+
+    const container = document.getElementById("recordsContainer");
+    container.innerHTML = "";
+
+    Array.from(students).forEach(student => {
+      const record = document.createElement("div");
+      record.classList.add("record");
+
+      const stud_id = student.getElementsByTagName("stud_id")[0].textContent;
+      const fname = student.getElementsByTagName("stud_firstname")[0].textContent;
+      const mname = student.getElementsByTagName("stud_middlename")[0].textContent;
+      const lname = student.getElementsByTagName("stud_lastname")[0].textContent;
+      const address = student.getElementsByTagName("stud_address")[0].textContent;
+      const gender = student.getElementsByTagName("stud_gender")[0].textContent;
+      const age = student.getElementsByTagName("stud_age")[0].textContent;
+
+      const firstBorrow = student.getElementsByTagName("Borrow")[0];
+      const transactionId = firstBorrow.getElementsByTagName("borrow_transactionid")[0].textContent;
+      const borrowDate = firstBorrow.getElementsByTagName("borrow_date")[0].textContent;
+      const dueDate = firstBorrow.getElementsByTagName("borrow_duedate")[0].textContent;
+      const status = firstBorrow.getElementsByTagName("borrow_status")[0].textContent;
+
+      // Card header
+      record.innerHTML = `
+        <div class="record-actions">
+          <button class="btn btn-return">Return</button>
+          <button class="btn btn-remove">Remove Form</button>
+        </div>
+        <div class="record-header">
+          <div class="info">
+            <p><strong>Transaction ID:</strong> ${transactionId}</p>
+            <p><strong>Borrower ID:</strong> ${stud_id}</p>
+            <p><strong>Borrower Name:</strong> ${lname}, ${fname} ${mname}</p>
+            <p><strong>Address:</strong> ${address}</p>
+          </div>
+          <div class="info">
+            <p><strong>Gender:</strong> ${gender}</p>
+            <p><strong>Age:</strong> ${age}</p>
+            <p><strong>Status:</strong> <span class="status ${status}">${status}</span></p>
+            <p><strong>Borrowed Date:</strong> ${borrowDate}</p>
+            <p><strong>Return Date:</strong> ${dueDate}</p>
+          </div>
+        </div>
+      `;
+
+      // Borrowed books table
+      let tableHTML = `
+        <h3>BORROWED BOOKS</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Batch ID</th>
+              <th>Book ID</th>
+              <th>Book Title</th>
+              <th>Book Author</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      const batches = student.getElementsByTagName("BorrowBatch");
+      Array.from(batches).forEach(batch => {
+        const batchId = batch.getElementsByTagName("batch_id")[0].textContent;
+        const bookCount = parseInt(batch.getElementsByTagName("batch_books")[0].textContent);
+
+        for (let i = 1; i <= bookCount; i++) {
+          const book = books[i - 1];
+          const bookId = book.getElementsByTagName("book_id")[0].textContent;
+          const bookTitle = book.getElementsByTagName("book_title")[0].textContent;
+          const authorId = book.getElementsByTagName("book_authors")[0].textContent;
+
+          const author = authors.find(a => a.getElementsByTagName("aut_id")[0].textContent === authorId);
+          const authorName = author 
+            ? `${author.getElementsByTagName("aut_firstname")[0].textContent} ${author.getElementsByTagName("aut_lastname")[0].textContent}`
+            : "Unknown";
+
+          tableHTML += `
+            <tr>
+              <td>${batchId}</td>
+              <td>${bookId}</td>
+              <td>${bookTitle}</td>
+              <td>${authorName}</td>
+            </tr>
+          `;
+        }
+      });
+
+      tableHTML += `</tbody></table>`;
+      record.innerHTML += tableHTML;
+      container.appendChild(record);
+    });
+
+  } catch (err) {
+    console.error("❌ Error fetching XML:", err);
+  }
+}
+
+fetchBorrowedBooksXML();
+</script>
+</body>
+</html>
