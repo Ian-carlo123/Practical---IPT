@@ -1,97 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Library>
-    <Borrowers>
-        <Borrower>
-            <borrower_id>STUD-21378</borrower_id>
-            <borrower_firstname>Juan</borrower_firstname>
-            <borrower_middlename>Cruz</borrower_middlename>
-            <borrower_lastname>Santos</borrower_lastname>
-            <borrower_address>Quezon City</borrower_address>
-            <borrower_gender>Male</borrower_gender>
-            <borrower_age>20</borrower_age>
-
-            <BorrowBatches>
-                <BorrowBatch>
-                    <batch_id>10</batch_id>
-                    <batch_books>2</batch_books>
-                    <batch_borrowerid>1</batch_borrowerid>
-
-                    <Borrows>
-                        <Borrow>
-                            <borrow_transactionid>AB31D</borrow_transactionid>
-                            <borrow_date>SEPT 15, 2023</borrow_date>
-                            <borrow_duedate>SEPT 25, 2025</borrow_duedate>
-                            <borrow_returndate>NULL</borrow_returndate>
-                            <borrow_bookbatch>101</borrow_bookbatch>
-                            <borrow_fines>0</borrow_fines>
-                            <borrow_status>Not Yet Returned</borrow_status>
-                        </Borrow>
-
-                        <Borrow>
-                            <borrow_transactionid>AB31D</borrow_transactionid>
-                            <borrow_date>SEPT 15, 2023</borrow_date>
-                            <borrow_duedate>SEPT 25, 2025</borrow_duedate>
-                            <borrow_returndate>NULL</borrow_returndate>
-                            <borrow_bookbatch>101</borrow_bookbatch>
-                            <borrow_fines>0</borrow_fines>
-                            <borrow_status>Not Yet Returned</borrow_status>
-                        </Borrow>
-
-                        <Borrow>
-                            <borrow_transactionid>AB31D</borrow_transactionid>
-                            <borrow_date>SEPT 15, 2023</borrow_date>
-                            <borrow_duedate>SEPT 25, 2025</borrow_duedate>
-                            <borrow_returndate>NULL</borrow_returndate>
-                            <borrow_bookbatch>101</borrow_bookbatch>
-                            <borrow_fines>0</borrow_fines>
-                            <borrow_status>Not Yet Returned</borrow_status>
-                        </Borrow>
-                    </Borrows>
-                </BorrowBatch>
-            </BorrowBatches>
-        </Borrower>
-    </Borrowers>
-
-    <Books>
-        <Book>
-            <book_id>1001</book_id>
-            <book_title>Shoe DOg</book_title>
-            <book_authors>1</book_authors>
-            <book_pubdate>2022-01-10</book_pubdate>
-        </Book>
-
-        <Book>
-            <book_id>2002</book_id>
-            <book_title>The Hard Thing About Hard Things</book_title>
-            <book_authors>2</book_authors>
-            <book_pubdate>2023-03-15</book_pubdate>
-        </Book>
-
-        <Book>
-            <book_id>1003<book_id>
-            <book_title>Deep Work</book_title>
-            <book_authors>3/book_authors>
-            <book_pubdate>2022-01-10</book_pubdate>
-        </Book>
-    </Books>
-
-    <Authors>
+<Database>
+  <Borrows>
+    <Borrow>
+      <borrow_transactionid>AB31D</borrow_transactionid>
+      <borrow_date>SEPT. 15, 2023</borrow_date>
+      <borrow_duedate>SEPT. 25, 2023</borrow_duedate>
+      <borrow_returndate xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+      <borrow_bookbatch>1001</borrow_bookbatch>
+      <Book>
+        <book_id>1001</book_id>
+        <book_title>Shoe Dog</book_title>
+        <book_pubdate>2022-01-10</book_pubdate>
         <Author>
-            <aut_id>1</aut_id>
-            <aut_firstname>Josh</aut_firstname>
-            <aut_lastname>Kiyosaki</aut_lastname>
+          <aut_id>1</aut_id>
+          <aut_firstname>Josh</aut_firstname>
+          <aut_lastname>Kiyosaki</aut_lastname>
         </Author>
+      </Book>
+      <Student>
+        <stud_id>STUD-21378</stud_id>
+        <stud_firstname>Juan</stud_firstname>
+        <stud_middlename>Cruz</stud_middlename>
+        <stud_lastname>Santos</stud_lastname>
+        <stud_address>Malaybalay City, Bukidnon</stud_address>
+        <stud_gender>Male</stud_gender>
+        <stud_age>20</stud_age>
+        <borrow_fines>0</borrow_fines>
+        <borrow_status>Not Yet Returned</borrow_status>
+      </Student>
+    </Borrow>
+  </Borrows>
 
-        <Author>
-            <aut_id>2</aut_id>
-            <aut_firstname>Knight</aut_firstname>
-            <aut_lastname>Phil</aut_lastname>
-        </Author>
+  <Students>
+    <Student>
+      <stud_id>STUD-21378</stud_id>
+      <stud_firstname>Juan</stud_firstname>
+      <stud_middlename>Cruz</stud_middlename>
+      <stud_lastname>Santos</stud_lastname>
+      <stud_address>Malaybalay City, Bukidnon</stud_address>
+      <stud_gender>Male</stud_gender>
+      <stud_age>20</stud_age>
+      <borrow_fines>0</borrow_fines>
+      <borrow_status>Not Yet Returned</borrow_status>
+    </Student>
+  </Students>
 
-        <Author>
-            <aut_id>3</aut_id>
-            <aut_firstname>Cal</aut_firstname>
-            <aut_lastname>Newport</aut_lastname>
-        </Author>
-    </Authors>
-</Library>
+  <Books>
+    <Book>
+      <book_id>1001</book_id>
+      <book_title>Shoe Dog</book_title>
+      <book_pubdate>2022-01-10</book_pubdate>
+    </Book>
+  </Books>
+
+  <Authors>
+    <Author>
+      <aut_id>1</aut_id>
+      <aut_firstname>Josh</aut_firstname>
+      <aut_lastname>Kiyosaki</aut_lastname>
+    </Author>
+  </Authors>
+</Database>
