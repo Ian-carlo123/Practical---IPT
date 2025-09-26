@@ -2,45 +2,59 @@ Library:
   Borrowers:
     - borrower_id: 1
       borrower_firstname: Juan
-      borrower_middlename: Cruz
-      borrower_lastname: Santos
-      borrower_address: Quezon City
+      borrower_middlename: Navarro
+      borrower_lastname: Dela Cruz
+      borrower_address: Malaybalay City, Bukidnon
       borrower_gender: Male
-      borrower_age: 21
+      borrower_age: 20
       BorrowBatches:
         - batch_id: 101
           batch_books: 2
           batch_borrowerid: 1
           Borrows:
-            - borrow_transactionid: 1001
-              borrow_date: "2025-09-10"
-              borrow_duedate: "2025-09-20"
+            - borrow_transactionid: AB31D
+              borrow_date: "SEPT 15, 2023"
+              borrow_duedate: "SEPT 25, 2023"
               borrow_returndate: "2025-09-19"
               borrow_bookbatch: 101
               borrow_fines: 0
-              borrow_status: Returned
-            - borrow_transactionid: 1002
-              borrow_date: "2025-09-15"
-              borrow_duedate: "2025-09-25"
-              borrow_returndate: null
+              borrow_status: Not Yet Returned
+            - borrow_transactionid: AB31D
+              borrow_date: "SEPT 15, 2023"
+              borrow_duedate: "SEPT 25, 2023"
+              borrow_returndate: "2025-09-19"
               borrow_bookbatch: 101
               borrow_fines: 0
-              borrow_status: Borrowed
+              borrow_status: Not Yet Returned
+            - borrow_transactionid: AB31D
+              borrow_date: "SEPT 15, 2023"
+              borrow_duedate: "SEPT 25, 2023"
+              borrow_returndate: "2025-09-19"
+              borrow_bookbatch: 101
+              borrow_fines: 0
+              borrow_status: Not Yet Returned
 
   Books:
-    - book_id: B001
-      book_title: Database Systems
+    - book_id: 1001
+      book_title: Shoe Dog
       book_authors: 1
       book_pubdate: "2022-01-10"
-    - book_id: B002
-      book_title: XML Fundamentals
+    - book_id: 1002
+      book_title: The Hard Thing About Hard Things
       book_authors: 2
+      book_pubdate: "2023-03-15"
+    - book_id: 1003
+      book_title: Deep Work
+      book_authors: 3
       book_pubdate: "2023-03-15"
 
   Authors:
     - aut_id: 1
-      aut_firstname: Maria
-      aut_lastname: Lopez
+      aut_firstname: Josh 
+      aut_lastname: Kiyosaki
     - aut_id: 2
-      aut_firstname: Carlos
-      aut_lastname: Dela Cruz
+      aut_firstname: Knight Phil
+      aut_lastname: Phil
+    - aut_id: 3
+      aut_firstname: Cal
+      aut_lastname: Newport

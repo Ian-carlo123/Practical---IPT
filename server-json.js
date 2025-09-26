@@ -4,35 +4,86 @@ const cors = require("cors");
 
 const app = express();
 const port = 3000;
-
-app.use(cors()); // allow all origins
-
-// Ignore favicon requests to prevent 404 logs
-app.get('/favicon.ico', (req, res) => res.sendStatus(204));
-
-// Path to your db.json file
 const dbFile = "./db.json";
 
-// Route to serve JSON data
-app.get("/", (req, res) => {
-  fs.readFile(dbFile, "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading db.json:", err);
-      res.status(500).json({ error: "Error reading db.json" });
-      return;
-    }
+app.use(cors());
+app.use(express.json());
 
-    try {
-      const jsonData = JSON.parse(data);
-      res.setHeader("Content-Type", "application/json");
-      res.send(JSON.stringify(jsonData, null, 2));
-    } catch (parseErr) {
-      console.error("Error parsing db.json:", parseErr);
-      res.status(500).json({ error: "Invalid JSON format in db.json" });
-    }
-  });
+// Helper functions
+function readDB() {
+  return JSON.parse(fs.readFileSync(dbFile, "utf8"));
+}
+function writeDB(data) {
+  fs.writeFileSync(dbFile, JSON.stringify(data, null, 2));
+}
+
+// ===== Root endpoint: show entire db.json =====
+app.get("/", (req, res) => {
+  const db = readDB();
+  res.json(db);
 });
 
+// ===== Borrows CRUD =====
+app.get("/borrows", (req, res) => {
+  const db = readDB();
+  res.json(db.Borrows);
+});
+
+app.get("/borrows/:id", (req, res) => {
+  const db = readDB();
+  const borrow = db.Borrows.find(b => b.borrow_transactionid === req.params.id);
+  if (!borrow) return res.status(404).json({ error: "Borrow not found" });
+  res.json(borrow);
+});
+
+app.post("/borrows", (req, res) => {
+  const db = readDB();
+  db.Borrows.push(req.body);
+  writeDB(db);
+  res.status(201).json(req.body);
+});
+
+app.put("/borrows/:id", (req, res) => {
+  const db = readDB();
+  const index = db.Borrows.findIndex(b => b.borrow_transactionid === req.params.id);
+  if (index === -1) return res.status(404).json({ error: "Borrow not found" });
+  db.Borrows[index] = req.body;
+  writeDB(db);
+  res.json(req.body);
+});
+
+app.delete("/borrows/:id", (req, res) => {
+  const db = readDB();
+  const index = db.Borrows.findIndex(b => b.borrow_transactionid === req.params.id);
+  if (index === -1) return res.status(404).json({ error: "Borrow not found" });
+  db.Borrows.splice(index, 1);
+  writeDB(db);
+  res.sendStatus(204);
+});
+
+// ===== Student info (single object) =====
+app.get("/student", (req, res) => {
+  const db = readDB();
+  res.json(db.Student);
+});
+
+app.put("/student", (req, res) => {
+  const db = readDB();
+  db.Student = req.body;
+  writeDB(db);
+  res.json(db.Student);
+});
+
+// ===== Update fines/status only =====
+app.patch("/student/fines", (req, res) => {
+  const db = readDB();
+  if (req.body.borrow_fines !== undefined) db.Student.borrow_fines = req.body.borrow_fines;
+  if (req.body.borrow_status !== undefined) db.Student.borrow_status = req.body.borrow_status;
+  writeDB(db);
+  res.json(db.Student);
+});
+
+// ===== Start server =====
 app.listen(port, () => {
-  console.log(`✅ JSON server running at http://localhost:${port}`);
+  console.log(`✅ API running at http://localhost:${port}`);
 });

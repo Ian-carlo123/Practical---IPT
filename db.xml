@@ -19,9 +19,9 @@
                     <Borrows>
                         <Borrow>
                             <borrow_transactionid>AB31D</borrow_transactionid>
-                            <borrow_date>2025-09-10</borrow_date>
-                            <borrow_duedate>2025-09-20</borrow_duedate>
-                            <borrow_returndate>2025-09-19</borrow_returndate>
+                            <borrow_date>SEPT 15, 2023</borrow_date>
+                            <borrow_duedate>SEPT 25, 2025</borrow_duedate>
+                            <borrow_returndate>NULL</borrow_returndate>
                             <borrow_bookbatch>101</borrow_bookbatch>
                             <borrow_fines>0</borrow_fines>
                             <borrow_status>Not Yet Returned</borrow_status>
@@ -29,9 +29,19 @@
 
                         <Borrow>
                             <borrow_transactionid>AB31D</borrow_transactionid>
-                            <borrow_date>2025-09-15</borrow_date>
-                            <borrow_duedate>2025-09-25</borrow_duedate>
-                            <borrow_returndate></borrow_returndate>
+                            <borrow_date>SEPT 15, 2023</borrow_date>
+                            <borrow_duedate>SEPT 25, 2025</borrow_duedate>
+                            <borrow_returndate>NULL</borrow_returndate>
+                            <borrow_bookbatch>101</borrow_bookbatch>
+                            <borrow_fines>0</borrow_fines>
+                            <borrow_status>Not Yet Returned</borrow_status>
+                        </Borrow>
+
+                        <Borrow>
+                            <borrow_transactionid>AB31D</borrow_transactionid>
+                            <borrow_date>SEPT 15, 2023</borrow_date>
+                            <borrow_duedate>SEPT 25, 2025</borrow_duedate>
+                            <borrow_returndate>NULL</borrow_returndate>
                             <borrow_bookbatch>101</borrow_bookbatch>
                             <borrow_fines>0</borrow_fines>
                             <borrow_status>Not Yet Returned</borrow_status>
@@ -44,31 +54,44 @@
 
     <Books>
         <Book>
-            <book_id>B001</book_id>
-            <book_title>Database Systems</book_title>
+            <book_id>1001</book_id>
+            <book_title>Shoe DOg</book_title>
             <book_authors>1</book_authors>
             <book_pubdate>2022-01-10</book_pubdate>
         </Book>
 
         <Book>
-            <book_id>B002</book_id>
-            <book_title>XML Fundamentals</book_title>
+            <book_id>2002</book_id>
+            <book_title>The Hard Thing About Hard Things</book_title>
             <book_authors>2</book_authors>
             <book_pubdate>2023-03-15</book_pubdate>
+        </Book>
+
+        <Book>
+            <book_id>1003<book_id>
+            <book_title>Deep Work</book_title>
+            <book_authors>3/book_authors>
+            <book_pubdate>2022-01-10</book_pubdate>
         </Book>
     </Books>
 
     <Authors>
         <Author>
             <aut_id>1</aut_id>
-            <aut_firstname>Maria</aut_firstname>
-            <aut_lastname>Lopez</aut_lastname>
+            <aut_firstname>Josh</aut_firstname>
+            <aut_lastname>Kiyosaki</aut_lastname>
         </Author>
 
         <Author>
             <aut_id>2</aut_id>
-            <aut_firstname>Carlos</aut_firstname>
-            <aut_lastname>Dela Cruz</aut_lastname>
+            <aut_firstname>Knight</aut_firstname>
+            <aut_lastname>Phil</aut_lastname>
+        </Author>
+
+        <Author>
+            <aut_id>3</aut_id>
+            <aut_firstname>Cal</aut_firstname>
+            <aut_lastname>Newport</aut_lastname>
         </Author>
     </Authors>
 </Library>

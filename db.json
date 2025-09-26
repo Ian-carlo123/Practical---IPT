@@ -1,77 +1,68 @@
 {
   "Library": {
-    "Students": [
+    "Borrows": [
       {
-        "stud_id": "STUD-21378",
-        "stud_firstname": "Juan",
-        "stud_middlename": "Cruz",
-        "stud_lastname": "Santos",
-        "stud_address": "Malaybalay City, Bukidnon",
-        "stud_gender": "Male",
-        "stud_age": 20,
-        "BorrowBatches": [
-          {
-            "batch_id": 10,
-            "batch_books": 2,
-            "batch_studentid": 1,
-            "Borrows": [
-              {
-                "borrow_transactionid": "AB31D",
-                "borrow_date": "2025-09-10",
-                "borrow_duedate": "2025-09-20",
-                "borrow_returndate": "2025-09-19",
-                "borrow_bookbatch": 1001,
-                "borrow_fines": 0,
-                "borrow_status": "Not Yet Returned"
-              },
-              {
-                "borrow_transactionid": "AB31D",
-                "borrow_date": "2025-09-15",
-                "borrow_duedate": "2025-09-25",
-                "borrow_returndate": null,
-                "borrow_bookbatch": 1002,
-                "borrow_fines": 0,
-                "borrow_status": "Borrowed"
-              },
-              {
-                "borrow_transactionid": "AB31D",
-                "borrow_date": "2025-09-15",
-                "borrow_duedate": "2025-09-25",
-                "borrow_returndate": null,
-                "borrow_bookbatch": 1003,
-                "borrow_fines": 0,
-                "borrow_status": "Borrowed"
-              }
-            ]
+        "borrow_transactionid": "AB31D",
+        "borrow_date": "SEPT. 15, 2023",
+        "borrow_duedate": "SEPT. 25, 2023",
+        "borrow_returndate": null,
+        "borrow_bookbatch": 1001,
+        "Book": {
+          "book_id": "1001",
+          "book_title": "Shoe Dog",
+          "book_pubdate": "2022-01-10",
+          "Author": {
+            "aut_id": 1,
+            "aut_firstname": "Josh",
+            "aut_lastname": "Kiyosaki"
           }
-        ]
-      }
-    ],
-    "Books": [
-      {
-        "book_id": "B001",
-        "book_title": "Database Systems",
-        "book_authors": 1,
-        "book_pubdate": "2022-01-10"
+        }
       },
       {
-        "book_id": "B002",
-        "book_title": "XML Fundamentals",
-        "book_authors": 2,
-        "book_pubdate": "2023-03-15"
-      }
-    ],
-    "Authors": [
-      {
-        "aut_id": 1,
-        "aut_firstname": "Maria",
-        "aut_lastname": "Lopez"
+        "borrow_transactionid": "AB32E",
+        "borrow_date": "SEPT. 15, 2023",
+        "borrow_duedate": "SEPT. 25, 2023",
+        "borrow_returndate": null,
+        "borrow_bookbatch": 1002,
+        "Book": {
+          "book_id": "1002",
+          "book_title": "The Hard Thing About Hard Things",
+          "book_pubdate": "2023-03-15",
+          "Author": {
+            "aut_id": 2,
+            "aut_firstname": "Knight",
+            "aut_lastname": "Phil"
+          }
+        }
       },
       {
-        "aut_id": 2,
-        "aut_firstname": "Carlos",
-        "aut_lastname": "Dela Cruz"
+        "borrow_transactionid": "AB33F",
+        "borrow_date": "SEPT. 15, 2023",
+        "borrow_duedate": "SEPT. 25, 2023",
+        "borrow_returndate": null,
+        "borrow_bookbatch": 1003,
+        "Book": {
+          "book_id": "1003",
+          "book_title": "Deep Work",
+          "book_pubdate": "2022-01-10",
+          "Author": {
+            "aut_id": 3,
+            "aut_firstname": "Newport",
+            "aut_lastname": "Cal"
+          }
+        }
       }
-    ]
+    ],
+    "Student": {
+      "stud_id": "STUD-21378",
+      "stud_firstname": "Juan",
+      "stud_middlename": "Cruz",
+      "stud_lastname": "Santos",
+      "stud_address": "Malaybalay City, Bukidnon",
+      "stud_gender": "Male",
+      "stud_age": 20,
+      "borrow_fines": 0,
+      "borrow_status": "Not Yet Returned"
+    }
   }
 }
