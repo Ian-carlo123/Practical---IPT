@@ -26,61 +26,61 @@ app.get("/", (req, res) => {
 // ===== Borrows CRUD =====
 app.get("/borrows", (req, res) => {
   const db = readDB();
-  res.json(db.Borrows);
+  res.json(db); // db is already an array of borrows
 });
 
 app.get("/borrows/:id", (req, res) => {
   const db = readDB();
-  const borrow = db.Borrows.find(b => b.borrow_transactionid === req.params.id);
+  const borrow = db.find(b => b.borrow_transactionid === req.params.id);
   if (!borrow) return res.status(404).json({ error: "Borrow not found" });
   res.json(borrow);
 });
 
 app.post("/borrows", (req, res) => {
   const db = readDB();
-  db.Borrows.push(req.body);
+  db.push(req.body);
   writeDB(db);
   res.status(201).json(req.body);
 });
 
 app.put("/borrows/:id", (req, res) => {
   const db = readDB();
-  const index = db.Borrows.findIndex(b => b.borrow_transactionid === req.params.id);
+  const index = db.findIndex(b => b.borrow_transactionid === req.params.id);
   if (index === -1) return res.status(404).json({ error: "Borrow not found" });
-  db.Borrows[index] = req.body;
+  db[index] = req.body;
   writeDB(db);
   res.json(req.body);
 });
 
 app.delete("/borrows/:id", (req, res) => {
   const db = readDB();
-  const index = db.Borrows.findIndex(b => b.borrow_transactionid === req.params.id);
+  const index = db.findIndex(b => b.borrow_transactionid === req.params.id);
   if (index === -1) return res.status(404).json({ error: "Borrow not found" });
-  db.Borrows.splice(index, 1);
+  db.splice(index, 1);
   writeDB(db);
   res.sendStatus(204);
 });
 
-// ===== Student info (single object) =====
-app.get("/student", (req, res) => {
-  const db = readDB();
-  res.json(db.Student);
-});
-
+// ===== Student info (single object inside each borrow) =====
+// Optional: If you want to update student in all borrows
 app.put("/student", (req, res) => {
   const db = readDB();
-  db.Student = req.body;
+  db.forEach(b => {
+    b.Student = req.body;
+  });
   writeDB(db);
-  res.json(db.Student);
+  res.json(req.body);
 });
 
-// ===== Update fines/status only =====
+// ===== Update fines/status only (all borrows) =====
 app.patch("/student/fines", (req, res) => {
   const db = readDB();
-  if (req.body.borrow_fines !== undefined) db.Student.borrow_fines = req.body.borrow_fines;
-  if (req.body.borrow_status !== undefined) db.Student.borrow_status = req.body.borrow_status;
+  db.forEach(b => {
+    if (req.body.borrow_fines !== undefined) b.Student.borrow_fines = req.body.borrow_fines;
+    if (req.body.borrow_status !== undefined) b.Student.borrow_status = req.body.borrow_status;
+  });
   writeDB(db);
-  res.json(db.Student);
+  res.json({ message: "Fines/status updated", borrows: db });
 });
 
 // ===== Start server =====
