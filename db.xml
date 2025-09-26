@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Library>
-    <Students>
-        <Student>
-            <stud_id>1</stud_id>
-            <stud_firstname>Juan</stud_firstname>
-            <stud_middlename>Cruz</stud_middlename>
-            <stud_lastname>Santos</stud_lastname>
-            <stud_address>Quezon City</stud_address>
-            <stud_gender>Male</stud_gender>
-            <stud_age>21</stud_age>
+    <Borrowers>
+        <Borrower>
+            <borrower_id>1</borrower_id>
+            <borrower_firstname>Juan</borrower_firstname>
+            <borrower_middlename>Cruz</borrower_middlename>
+            <borrower_lastname>Santos</borrower_lastname>
+            <borrower_address>Quezon City</borrower_address>
+            <borrower_gender>Male</borrower_gender>
+            <borrower_age>21</borrower_age>
 
             <BorrowBatches>
                 <BorrowBatch>
                     <batch_id>101</batch_id>
                     <batch_books>2</batch_books>
-                    <batch_studentid>1</batch_studentid>
+                    <batch_borrowerid>1</batch_borrowerid>
 
                     <Borrows>
                         <Borrow>
@@ -39,8 +39,8 @@
                     </Borrows>
                 </BorrowBatch>
             </BorrowBatches>
-        </Student>
-    </Students>
+        </Borrower>
+    </Borrowers>
 
     <Books>
         <Book>

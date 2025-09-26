@@ -43,32 +43,31 @@ async function fetchBorrowedBooksXML() {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlText, "application/xml");
 
-    const students = xmlDoc.getElementsByTagName("Student");
+    const borrowers = xmlDoc.getElementsByTagName("Borrower");
     const books = Array.from(xmlDoc.getElementsByTagName("Book"));
     const authors = Array.from(xmlDoc.getElementsByTagName("Author"));
 
     const container = document.getElementById("recordsContainer");
     container.innerHTML = "";
 
-    Array.from(students).forEach(student => {
+    Array.from(borrowers).forEach(borrower => {
       const record = document.createElement("div");
       record.classList.add("record");
 
-      const stud_id = student.getElementsByTagName("stud_id")[0].textContent;
-      const fname = student.getElementsByTagName("stud_firstname")[0].textContent;
-      const mname = student.getElementsByTagName("stud_middlename")[0].textContent;
-      const lname = student.getElementsByTagName("stud_lastname")[0].textContent;
-      const address = student.getElementsByTagName("stud_address")[0].textContent;
-      const gender = student.getElementsByTagName("stud_gender")[0].textContent;
-      const age = student.getElementsByTagName("stud_age")[0].textContent;
+      const id = borrower.getElementsByTagName("borrower_id")[0].textContent;
+      const fname = borrower.getElementsByTagName("borrower_firstname")[0].textContent;
+      const mname = borrower.getElementsByTagName("borrower_middlename")[0].textContent;
+      const lname = borrower.getElementsByTagName("borrower_lastname")[0].textContent;
+      const address = borrower.getElementsByTagName("borrower_address")[0].textContent;
+      const gender = borrower.getElementsByTagName("borrower_gender")[0].textContent;
+      const age = borrower.getElementsByTagName("borrower_age")[0].textContent;
 
-      const firstBorrow = student.getElementsByTagName("Borrow")[0];
+      const firstBorrow = borrower.getElementsByTagName("Borrow")[0];
       const transactionId = firstBorrow.getElementsByTagName("borrow_transactionid")[0].textContent;
       const borrowDate = firstBorrow.getElementsByTagName("borrow_date")[0].textContent;
       const dueDate = firstBorrow.getElementsByTagName("borrow_duedate")[0].textContent;
       const status = firstBorrow.getElementsByTagName("borrow_status")[0].textContent;
 
-      // Card header
       record.innerHTML = `
         <div class="record-actions">
           <button class="btn btn-return">Return</button>
@@ -77,7 +76,7 @@ async function fetchBorrowedBooksXML() {
         <div class="record-header">
           <div class="info">
             <p><strong>Transaction ID:</strong> ${transactionId}</p>
-            <p><strong>Borrower ID:</strong> ${stud_id}</p>
+            <p><strong>Borrower ID:</strong> ${id}</p>
             <p><strong>Borrower Name:</strong> ${lname}, ${fname} ${mname}</p>
             <p><strong>Address:</strong> ${address}</p>
           </div>
@@ -91,7 +90,6 @@ async function fetchBorrowedBooksXML() {
         </div>
       `;
 
-      // Borrowed books table
       let tableHTML = `
         <h3>BORROWED BOOKS</h3>
         <table>
@@ -106,7 +104,7 @@ async function fetchBorrowedBooksXML() {
           <tbody>
       `;
 
-      const batches = student.getElementsByTagName("BorrowBatch");
+      const batches = borrower.getElementsByTagName("BorrowBatch");
       Array.from(batches).forEach(batch => {
         const batchId = batch.getElementsByTagName("batch_id")[0].textContent;
         const bookCount = parseInt(batch.getElementsByTagName("batch_books")[0].textContent);

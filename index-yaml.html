@@ -39,24 +39,23 @@
 <script>
 async function fetchBorrowedBooksYAML() {
   try {
-    const res = await fetch("http://localhost:3002/"); // ✅ now matches server-yaml.js root
+    const res = await fetch("http://localhost:3002/"); 
     if (!res.ok) throw new Error("Network response was not ok");
     const yamlText = await res.text();
-    const data = jsyaml.load(yamlText); // ✅ parse raw YAML
+    const data = jsyaml.load(yamlText); 
 
-    const students = data.Library.Students;
+    const borrowers = data.Library.Borrowers;
     const books = data.Library.Books;
     const authors = data.Library.Authors;
 
     const container = document.getElementById("recordsContainer");
     container.innerHTML = "";
 
-    students.forEach(student => {
+    borrowers.forEach(borrower => {
       const record = document.createElement("div");
       record.classList.add("record");
 
-      // Take first borrow entry for header
-      const firstBatch = student.BorrowBatches[0];
+      const firstBatch = borrower.BorrowBatches[0];
       const firstBorrow = firstBatch.Borrows[0];
 
       const transactionId = firstBorrow.borrow_transactionid;
@@ -72,13 +71,13 @@ async function fetchBorrowedBooksYAML() {
         <div class="record-header">
           <div class="info">
             <p><strong>Transaction ID:</strong> ${transactionId}</p>
-            <p><strong>Borrower ID:</strong> ${student.stud_id}</p>
-            <p><strong>Borrower Name:</strong> ${student.stud_lastname}, ${student.stud_firstname} ${student.stud_middlename}</p>
-            <p><strong>Address:</strong> ${student.stud_address}</p>
+            <p><strong>Borrower ID:</strong> ${borrower.borrower_id}</p>
+            <p><strong>Borrower Name:</strong> ${borrower.borrower_lastname}, ${borrower.borrower_firstname} ${borrower.borrower_middlename}</p>
+            <p><strong>Address:</strong> ${borrower.borrower_address}</p>
           </div>
           <div class="info">
-            <p><strong>Gender:</strong> ${student.stud_gender}</p>
-            <p><strong>Age:</strong> ${student.stud_age}</p>
+            <p><strong>Gender:</strong> ${borrower.borrower_gender}</p>
+            <p><strong>Age:</strong> ${borrower.borrower_age}</p>
             <p><strong>Status:</strong> <span class="status ${status}">${status}</span></p>
             <p><strong>Borrowed Date:</strong> ${borrowDate}</p>
             <p><strong>Return Date:</strong> ${dueDate}</p>
@@ -86,7 +85,6 @@ async function fetchBorrowedBooksYAML() {
         </div>
       `;
 
-      // Borrowed Books Table
       let tableHTML = `
         <h3>BORROWED BOOKS</h3>
         <table>
@@ -101,9 +99,8 @@ async function fetchBorrowedBooksYAML() {
           <tbody>
       `;
 
-      student.BorrowBatches.forEach(batch => {
+      borrower.BorrowBatches.forEach(batch => {
         batch.Borrows.forEach((borrow, idx) => {
-          // match books with borrow index (for demo)
           const book = books[idx]; 
           const author = authors.find(a => a.aut_id == book.book_authors);
 

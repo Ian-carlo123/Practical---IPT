@@ -13,7 +13,7 @@
   h1 { text-align:center; margin-bottom:30px; font-size:22px; }
 
   .record { 
-    background:#fce4ec; /* light pink background */
+    background:#fce4ec;
     border-radius:8px; 
     box-shadow:0 2px 6px rgba(0,0,0,0.2); 
     padding:20px; 
@@ -60,7 +60,6 @@
   .status.Borrowed { color:#d17f00; }
   .status.Returned { color:green; }
 
-  /* Footer note like screenshot */
   .caption {
     text-align:center; 
     margin-top:10px; 
@@ -78,22 +77,21 @@ async function fetchBorrowedBooks() {
   try {
     const res = await fetch("http://localhost:3000/"); 
     const data = await res.json();
-    const { Students, Books, Authors } = data.Library;
+    const { Borrowers, Books, Authors } = data.Library;
     const container = document.getElementById("recordsContainer");
     container.innerHTML = "";
 
-    // Map batch_books to book_id
+    // Map batch_books to book_id (adjust if needed)
     const bookIdMap = {
       1: "B001",
       2: "B002"
     };
 
-    Students.forEach(student => {
+    Borrowers.forEach(borrower => {
       const record = document.createElement("div");
       record.classList.add("record");
 
-      // Use first borrow for header info
-      const firstBatch = student.BorrowBatches[0];
+      const firstBatch = borrower.BorrowBatches[0];
       const firstBorrow = firstBatch.Borrows[0];
 
       record.innerHTML = `
@@ -105,13 +103,13 @@ async function fetchBorrowedBooks() {
         <div class="record-header">
           <div class="info">
             <p><strong>Transaction ID:</strong> ${firstBorrow.borrow_transactionid}</p>
-            <p><strong>Borrower ID:</strong> ${student.stud_id}</p>
-            <p><strong>Borrower Name:</strong> ${student.stud_lastname}, ${student.stud_firstname} ${student.stud_middlename}</p>
-            <p><strong>Address:</strong> ${student.stud_address}</p>
+            <p><strong>Borrower ID:</strong> ${borrower.borrower_id}</p>
+            <p><strong>Borrower Name:</strong> ${borrower.borrower_lastname}, ${borrower.borrower_firstname} ${borrower.borrower_middlename}</p>
+            <p><strong>Address:</strong> ${borrower.borrower_address}</p>
           </div>
           <div class="info">
-            <p><strong>Gender:</strong> ${student.stud_gender}</p>
-            <p><strong>Age:</strong> ${student.stud_age}</p>
+            <p><strong>Gender:</strong> ${borrower.borrower_gender}</p>
+            <p><strong>Age:</strong> ${borrower.borrower_age}</p>
             <p><strong>Status:</strong> <span class="status ${firstBorrow.borrow_status}">${firstBorrow.borrow_status}</span></p>
             <p><strong>Borrowed Date:</strong> ${firstBorrow.borrow_date}</p>
             <p><strong>Return Date:</strong> ${firstBorrow.borrow_duedate}</p>
@@ -133,7 +131,7 @@ async function fetchBorrowedBooks() {
           <tbody>
       `;
 
-      student.BorrowBatches.forEach(batch => {
+      borrower.BorrowBatches.forEach(batch => {
         batch.Borrows.forEach(borrow => {
           const bookId = bookIdMap[batch.batch_books]; 
           const book = Books.find(b => b.book_id === bookId);
@@ -152,7 +150,6 @@ async function fetchBorrowedBooks() {
 
       tableHTML += `</tbody></table>`;
       record.innerHTML += tableHTML;
-
 
       container.appendChild(record);
     });

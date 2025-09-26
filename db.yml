@@ -1,16 +1,16 @@
 Library:
-  Students:
-    - stud_id: 1
-      stud_firstname: Juan
-      stud_middlename: Cruz
-      stud_lastname: Santos
-      stud_address: Quezon City
-      stud_gender: Male
-      stud_age: 21
+  Borrowers:
+    - borrower_id: 1
+      borrower_firstname: Juan
+      borrower_middlename: Cruz
+      borrower_lastname: Santos
+      borrower_address: Quezon City
+      borrower_gender: Male
+      borrower_age: 21
       BorrowBatches:
         - batch_id: 101
           batch_books: 2
-          batch_studentid: 1
+          batch_borrowerid: 1
           Borrows:
             - borrow_transactionid: 1001
               borrow_date: "2025-09-10"
